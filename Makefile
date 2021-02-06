@@ -5,7 +5,5 @@ main: main.c
 
 run: main
 	./main
-
-show: potential_bw.ppm potential_color.ppm
 	sxiv potential_bw.ppm
 	sxiv potential_color.ppm

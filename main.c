@@ -15,6 +15,7 @@
 
 #define PARTS 10
 #define MAX_Q 100
+#define MAX_VOLTS (1.2 * MAX_Q)
 
 double dist(double x1, double y1, double x2, double y2); 
 double potential(double q, double d); 
@@ -51,18 +52,13 @@ int main()
             for(int i = 0; i < PARTS; ++i)
             {
                 double d = dist(x, y, xs[i], ys[i]); 
-                if(d == 0)
-                {
-                    volts = 255; 
-                    break; 
-                }
                 volts += potential(qs[i], d); 
             }
-            double ratio = volts / MAX_Q; 
+            double ratio = volts / MAX_VOLTS; 
+            if(ratio > 1)       ratio = 1; 
+            else if(ratio < 0)  ratio = 0; 
 
             int shade = 255 * ratio; 
-            if(shade > 255)     shade = 255; 
-            else if(shade < 0)  shade = 0; 
             snprintf(buffer, sizeof(buffer)-1, "%d %d %d ", shade, shade, shade); 
             write(fd, buffer, strlen(buffer)); 
 
@@ -87,7 +83,8 @@ double dist(double x1, double y1, double x2, double y2)
 
 double potential(double q, double d)
 {
-    if(d == 0)  return 0; 
+    if(d == 0)  
+        return MAX_VOLTS; 
     return K * (q / d); 
 }
 
